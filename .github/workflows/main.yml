@@ -1,0 +1,23 @@
+name: PR Title Naming Convention
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  validate-pr-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR Title Naming Convention
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          JIRA_TICKET_REGEX="^[A-Z]+-[0-9]+: .+"
+
+          if [[ ! "$PR_TITLE" =~ $JIRA_TICKET_REGEX ]]; then
+            echo "Error: Pull Request title '$PR_TITLE' does not follow the required convention."
+            echo "PR title must start with a Jira ticket number (e.g., PROJ-123: description)."
+            exit 1
+          else
+            echo "Success: Pull Request title follows the required convention."
+          fi
